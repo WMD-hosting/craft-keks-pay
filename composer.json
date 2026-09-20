@@ -1,0 +1,70 @@
+{
+    "name": "wmd/craft-keks-pay",
+    "description": "KEKS Pay mobile wallet for Craft Commerce: app redirect or QR code at checkout, bank callback, refunds.",
+    "type": "craft-plugin",
+    "license": "MIT",
+    "keywords": [
+        "craft",
+        "craftcms",
+        "craft-plugin",
+        "craft-commerce",
+        "commerce",
+        "payment",
+        "gateway",
+        "keks",
+        "keks-pay",
+        "wallet",
+        "qr-code",
+        "croatia"
+    ],
+    "support": {
+        "docs": "https://github.com/WMD-hosting/craft-keks-pay/blob/main/README.md",
+        "issues": "https://github.com/WMD-hosting/craft-keks-pay/issues"
+    },
+    "authors": [
+        {
+            "name": "WMD",
+            "homepage": "https://wmd.hr/"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-openssl": "*",
+        "craftcms/cms": "^5.0.0",
+        "craftcms/commerce": "^5.0.0",
+        "chillerlan/php-qrcode": "^5.0"
+    },
+    "require-dev": {
+        "craftcms/ecs": "dev-main",
+        "craftcms/phpstan": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "wmd\\craftkekspay\\": "src/"
+        }
+    },
+    "extra": {
+        "handle": "keks-pay",
+        "name": "KEKS Pay",
+        "developer": "WMD",
+        "developerUrl": "https://wmd.hr/",
+        "documentationUrl": "https://github.com/WMD-hosting/craft-keks-pay/blob/main/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/WMD-hosting/craft-keks-pay/main/CHANGELOG.md",
+        "class": "wmd\\craftkekspay\\KeksPay"
+    },
+    "scripts": {
+        "check-cs": "ecs check --ansi",
+        "fix-cs": "ecs check --ansi --fix",
+        "phpstan": "phpstan --memory-limit=1G"
+    },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.2"
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
+    }
+}

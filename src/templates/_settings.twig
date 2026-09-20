@@ -1,0 +1,77 @@
+{# @var plugin \wmd\craftkekspay\KeksPay #}
+{# @var settings \wmd\craftkekspay\models\Settings #}
+{% import '_includes/forms.twig' as forms %}
+{% set t = 'keks-pay' %}
+{% set trigger = craft.app.config.general.actionTrigger %}
+
+<h2>{{ 'Merchant'|t(t) }}</h2>
+
+{{ forms.autosuggestField({
+    first: true,
+    label: 'CID'|t(t),
+    instructions: 'Customer ID issued by KEKS Pay.'|t(t),
+    id: 'cid', name: 'cid', value: settings.cid, required: true, suggestEnvVars: true, errors: settings.getErrors('cid'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'TID'|t(t),
+    instructions: 'Terminal ID issued by KEKS Pay.'|t(t),
+    id: 'tid', name: 'tid', value: settings.tid, required: true, suggestEnvVars: true, errors: settings.getErrors('tid'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Key'|t(t),
+    instructions: '3DES key issued by KEKS Pay, used to sign refunds. Prefer an environment variable, e.g. $KEKS_KEY.'|t(t),
+    id: 'key', name: 'key', value: settings.key, required: true, suggestEnvVars: true, errors: settings.getErrors('key'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Callback token'|t(t),
+    instructions: 'Token the bank sends on the payment callback as "Authorization: Token …". Leave empty if KEKS Pay did not set one up for you.'|t(t),
+    id: 'authToken', name: 'authToken', value: settings.authToken, suggestEnvVars: true,
+}) }}
+
+<hr>
+<h2>{{ 'Endpoints'|t(t) }}</h2>
+
+{{ forms.autosuggestField({
+    label: 'App URL'|t(t),
+    instructions: 'Base of the payment deep link, normally https://kekspay.hr/.'|t(t),
+    id: 'storeUrl', name: 'storeUrl', value: settings.storeUrl, required: true, suggestEnvVars: true, errors: settings.getErrors('storeUrl'),
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'API URL'|t(t),
+    instructions: 'e-retailer API base. https://kekspayuat.erstebank.hr/ for testing; KEKS Pay gives you the production host.'|t(t),
+    id: 'storeUrlApi', name: 'storeUrlApi', value: settings.storeUrlApi, required: true, suggestEnvVars: true, errors: settings.getErrors('storeUrlApi'),
+}) }}
+
+<hr>
+<h2>{{ 'Storefront'|t(t) }}</h2>
+
+{{ forms.elementSelectField({
+    label: 'Logo'|t(t),
+    instructions: 'Shown next to the payment method; available in templates as craft.keks.logo.'|t(t),
+    id: 'logoId', name: 'logoId',
+    elements: settings.logoId ? craft.assets.id(settings.logoId).all() : [],
+    elementType: 'craft\\elements\\Asset', criteria: { kind: 'image' }, limit: 1, viewMode: 'large',
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Fallback success URL'|t(t),
+    instructions: 'Used when the order has no return URL.'|t(t),
+    id: 'successUrl', name: 'successUrl', value: settings.successUrl, suggestEnvVars: true,
+}) }}
+
+{{ forms.autosuggestField({
+    label: 'Fallback cancel URL'|t(t),
+    instructions: 'Used when the order has no cancel URL.'|t(t),
+    id: 'failUrl', name: 'failUrl', value: settings.failUrl, suggestEnvVars: true,
+}) }}
+
+<hr>
+<h2>{{ 'Callback URL'|t(t) }}</h2>
+<p>{{ 'Give KEKS Pay this URL for the payment result callback:'|t(t) }}</p>
+<ul class="bullets">
+    <li><code>{{ siteUrl(trigger ~ '/keks-pay/keks/processing') }}</code></li>
+</ul>

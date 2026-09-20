@@ -1,0 +1,29 @@
+{# Payment form fragment for the checkout: QR code for desktop, app link for phones, poll until paid. #}
+{% set t = 'keks-pay' %}
+{% set pollUrl = actionUrl('keks-pay/keks/check-transaction', { orderId: order.id }) %}
+<div class="keks-pay" data-keks-poll="{{ pollUrl }}">
+    {% if qrCode is defined and qrCode %}
+        <p>{{ 'Scan the code with the KEKS Pay app.'|t(t) }}</p>
+        <img src="{{ qrCode }}" alt="{{ 'KEKS Pay QR code'|t(t) }}" width="300" height="300">
+    {% endif %}
+    {% if appUrl is defined and appUrl %}
+        <p><a href="{{ appUrl }}" rel="noopener">{{ 'Open the KEKS Pay app'|t(t) }}</a></p>
+    {% endif %}
+    <p class="keks-pay__waiting">{{ 'Waiting for the payment confirmation…'|t(t) }}</p>
+</div>
+<script>
+(function () {
+    var root = document.querySelector('.keks-pay[data-keks-poll]');
+    if (!root) return;
+    var url = root.getAttribute('data-keks-poll');
+    var timer = setInterval(function () {
+        fetch(url, { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.result) { clearInterval(timer); window.location.href = data.url; }
+                else if (data.stop) { clearInterval(timer); }
+            })
+            .catch(function () {});
+    }, 5000);
+})();
+</script>
