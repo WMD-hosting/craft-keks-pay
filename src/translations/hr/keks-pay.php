@@ -26,6 +26,8 @@ return [
     'Storefront' => 'Web trgovina',
     'Logo' => 'Logo',
     'Shown next to the payment method; available in templates as craft.keks.logo.' => 'Prikazuje se uz način plaćanja; u predlošcima dostupan kao craft.keks.logo.',
+    'Payment page' => 'Stranica plaćanja',
+    'Site page the customer is sent to after placing the order, showing the QR code and the app link, e.g. `checkout/keks-pay?number={number}`. Leave empty to send the customer straight into the app (phones only).' => 'Stranica na koju kupac dolazi nakon narudžbe, s QR kodom i poveznicom na aplikaciju, npr. `checkout/keks-pay?number={number}`. Prazno šalje kupca ravno u aplikaciju (samo za mobitele).',
     'Fallback success URL' => 'Rezervni URL uspjeha',
     'Used when the order has no return URL.' => 'Koristi se kad narudžba nema return URL.',
     'Fallback cancel URL' => 'Rezervni URL otkaza',

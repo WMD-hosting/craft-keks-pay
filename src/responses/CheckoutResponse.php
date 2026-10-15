@@ -8,7 +8,8 @@ use craft\commerce\models\Transaction;
 use wmd\craftkekspay\KeksPay;
 
 /**
- * On purchase: a GET redirect into the KEKS Pay app deep link. On completion:
+ * On purchase: a GET redirect to the payment page, or into the KEKS Pay app
+ * when no payment page is configured. On completion:
  * success (the bank callback has already recorded the payment).
  */
 class CheckoutResponse implements RequestResponseInterface
@@ -52,7 +53,7 @@ class CheckoutResponse implements RequestResponseInterface
 
     public function getRedirectUrl(): string
     {
-        return KeksPay::getInstance()->keksService->paymentUrl($this->transaction);
+        return KeksPay::getInstance()->keksService->checkoutUrl($this->transaction);
     }
 
     public function getTransactionReference(): string

@@ -58,6 +58,12 @@
 }) }}
 
 {{ forms.autosuggestField({
+    label: 'Payment page'|t(t),
+    instructions: 'Site page the customer is sent to after placing the order, showing the QR code and the app link, e.g. `checkout/keks-pay?number={number}`. Leave empty to send the customer straight into the app (phones only).'|t(t),
+    id: 'paymentPageUrl', name: 'paymentPageUrl', value: settings.paymentPageUrl, suggestEnvVars: true,
+}) }}
+
+{{ forms.autosuggestField({
     label: 'Fallback success URL'|t(t),
     instructions: 'Used when the order has no return URL.'|t(t),
     id: 'successUrl', name: 'successUrl', value: settings.successUrl, suggestEnvVars: true,

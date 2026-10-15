@@ -22,9 +22,9 @@ use yii\base\NotSupportedException;
 
 /**
  * KEKS Pay: the customer pays in the KEKS Pay app, reached through a deep
- * link (mobile) or by scanning the QR code on the checkout page (desktop).
- * The bank then calls back with the result, and the checkout page polls the
- * order until it is paid.
+ * link (mobile) or by scanning a QR code (desktop) on the payment page that
+ * "Pay" leads to. The bank then calls back with the result, and the payment
+ * page polls the order until it is paid.
  */
 class KeksGateway extends BaseGateway
 {
@@ -49,9 +49,7 @@ class KeksGateway extends BaseGateway
         $previousMode = $view->getTemplateMode();
         $view->setTemplateMode(View::TEMPLATE_MODE_CP);
 
-        $transaction = Commerce::getInstance()->getTransactions()->createTransaction($order);
-        $params['qrCode'] = KeksPay::getInstance()->keksService->qrCode($transaction);
-        $params['appUrl'] = KeksPay::getInstance()->keksService->paymentUrl($transaction);
+        $params += KeksPay::getInstance()->keksService->paymentDetails($order);
 
         $html = $view->renderTemplate('keks-pay/form.twig', $params);
         $view->setTemplateMode($previousMode);

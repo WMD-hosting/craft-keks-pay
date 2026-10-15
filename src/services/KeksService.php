@@ -7,6 +7,7 @@ use chillerlan\QRCode\QROptions;
 use Craft;
 use craft\commerce\elements\Order;
 use craft\commerce\models\Transaction;
+use craft\commerce\Plugin as Commerce;
 use craft\helpers\App;
 use craft\helpers\UrlHelper;
 use GuzzleHttp\Exception\GuzzleException;
@@ -59,13 +60,49 @@ class KeksService extends Component
     {
         $order = $transaction->getOrder();
         $settings = KeksPay::getInstance()->getSettings();
-        $success = (string)$order->returnUrl ?: (string)App::parseEnv($settings->successUrl) ?: UrlHelper::siteUrl();
-        $fail = (string)$order->cancelUrl ?: (string)App::parseEnv($settings->failUrl) ?: UrlHelper::siteUrl();
+        $success = (string)$order->returnUrl ?: (string)App::parseEnv($settings->successUrl);
+        $fail = (string)$order->cancelUrl ?: (string)App::parseEnv($settings->failUrl);
 
+        // The app opens these outside the site, so a relative return URL
+        // (`checkout/complete?number=…`, as Commerce stores it) must be made absolute.
         return $this->appUrl . '/galebpay?' . http_build_query($this->paymentData($transaction) + [
-            'success_url' => $success,
-            'fail_url' => $fail,
+            'success_url' => UrlHelper::siteUrl($success),
+            'fail_url' => UrlHelper::siteUrl($fail),
         ]);
+    }
+
+    /**
+     * Where "Pay" sends the customer: the site's payment page when one is
+     * configured (it shows the QR code on desktop and the app link on phones),
+     * otherwise straight into the app.
+     */
+    public function checkoutUrl(Transaction $transaction): string
+    {
+        $page = trim((string)App::parseEnv(KeksPay::getInstance()->getSettings()->paymentPageUrl));
+        if ($page === '') {
+            return $this->paymentUrl($transaction);
+        }
+
+        $order = $transaction->getOrder();
+
+        return UrlHelper::siteUrl(Craft::$app->getView()->renderSandboxedObjectTemplate($page, $order, $order->getObjectTemplateVariables()));
+    }
+
+    /**
+     * Everything a payment page needs for an order: the QR code, the app link
+     * and the URL that reports whether the order has been paid.
+     *
+     * @return array{qrCode: string, appUrl: string, pollUrl: string}
+     */
+    public function paymentDetails(Order $order): array
+    {
+        $transaction = Commerce::getInstance()->getTransactions()->createTransaction($order);
+
+        return [
+            'qrCode' => $this->qrCode($transaction),
+            'appUrl' => $this->paymentUrl($transaction),
+            'pollUrl' => UrlHelper::actionUrl('keks-pay/keks/check-transaction', ['number' => $order->number]),
+        ];
     }
 
     /**

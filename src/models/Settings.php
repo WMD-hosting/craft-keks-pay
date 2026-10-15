@@ -33,6 +33,12 @@ class Settings extends Model
     /** @var string Where the customer lands after a failed payment when the order has no cancel URL. */
     public string $failUrl = '';
 
+    /**
+     * @var string Site page "Pay" redirects to, showing the QR code and the app link. Object template on the
+     * order, e.g. `checkout/keks-pay?number={number}`. Empty sends the customer straight into the app.
+     */
+    public string $paymentPageUrl = '';
+
     /** @var array Asset ID of the logo shown next to the payment method. */
     public array $logoId = [];
 
