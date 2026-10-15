@@ -1,5 +1,9 @@
 # Release Notes for KEKS Pay
 
+## 1.0.1 - 2026-10-15
+
+- `getPaymentFormHtml()` returns nothing when no order is passed, instead of a Twig error. A checkout that renders every gateway's form before payment (`getPaymentFormHtml({})`) no longer fails with a 500.
+
 ## 1.0.0 - 2026-09-20
 
 First public release, after two years installed on Croatian stores.

@@ -38,16 +38,20 @@ class KeksGateway extends BaseGateway
      */
     public function getPaymentFormHtml(array $params): ?string
     {
+        // Without an order there is no transaction to show a code for or to poll. A checkout that
+        // lists every gateway's form up front calls this with no params; the code comes after "Pay".
+        $order = $params['order'] ?? null;
+        if (!$order instanceof Order) {
+            return null;
+        }
+
         $view = Craft::$app->getView();
         $previousMode = $view->getTemplateMode();
         $view->setTemplateMode(View::TEMPLATE_MODE_CP);
 
-        $order = $params['order'] ?? null;
-        if ($order instanceof Order) {
-            $transaction = Commerce::getInstance()->getTransactions()->createTransaction($order);
-            $params['qrCode'] = KeksPay::getInstance()->keksService->qrCode($transaction);
-            $params['appUrl'] = KeksPay::getInstance()->keksService->paymentUrl($transaction);
-        }
+        $transaction = Commerce::getInstance()->getTransactions()->createTransaction($order);
+        $params['qrCode'] = KeksPay::getInstance()->keksService->qrCode($transaction);
+        $params['appUrl'] = KeksPay::getInstance()->keksService->paymentUrl($transaction);
 
         $html = $view->renderTemplate('keks-pay/form.twig', $params);
         $view->setTemplateMode($previousMode);
